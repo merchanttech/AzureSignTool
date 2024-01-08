@@ -73,7 +73,6 @@ stages:
         packagesToPack: '**/MTMAzureSignTool.csproj'
         versioningScheme: 'byBuildNumber'   
         includeReferencedProjects: true
-        arguments: '-MSBuildVersion 17.5'
     - task: NuGetCommand@2
       displayName: Publish Nuget Package
       inputs:
