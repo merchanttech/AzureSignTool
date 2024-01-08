@@ -12,6 +12,7 @@ name: $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 variables:
   buildConfiguration: 'Release'  
   tag: '$(Build.BuildId)'
+  dotNetVersion: '8.x'
 
   
   # Agent VM image name
@@ -69,7 +70,7 @@ stages:
       displayName: Create Nuget Package file
       inputs:
         command: 'pack'
-        packagesToPack: '**/AzureSignTool.csproj'
+        packagesToPack: '**/MTMAzureSignTool.csproj'
         versioningScheme: 'byBuildNumber'   
         includeReferencedProjects: true
         arguments: '-MSBuildVersion 17.5'
