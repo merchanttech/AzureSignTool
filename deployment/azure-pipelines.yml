@@ -73,11 +73,10 @@ stages:
         packagesToPack: '**/MTMAzureSignTool.csproj'
         versioningScheme: 'byBuildNumber'   
         includeReferencedProjects: true
-        arguments: '-MSBuildVersion 17.5'
     - task: NuGetCommand@2
       displayName: Publish Nuget Package
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/MTMAzureSignTool.*.nupkg'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/MTMCodeSigningTool.*.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: '8f4a2c4e-a2cd-41fd-84ba-3c81b8ea529d/50a18726-b4ab-4fa3-831b-ca9eaa986b6d'      
