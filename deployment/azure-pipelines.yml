@@ -1,0 +1,91 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+
+name: $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+variables:
+  buildConfiguration: 'Release'  
+  tag: '$(Build.BuildId)'
+
+  
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and publish Nuget package
+
+  jobs:
+  - job: BuildNuget
+    displayName: Build Nuget Package
+    pool:
+      name: Default
+
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8 sdk'
+      inputs:
+        packageType: sdk
+        version: '$(dotNetVersion)'
+    - task: NuGetToolInstaller@1
+      displayName: Install Nuget Version 6.4.0
+      inputs:
+        versionSpec: '6.4.0'
+    - task: DotNetCoreCLI@2
+      displayName: Nuget Restore
+      inputs:
+          command: 'restore'
+          feedsToUse: 'config'
+          noCache: true
+          nugetConfigPath: '$(System.DefaultWorkingDirectory)/nuget.config'
+          includeNuGetOrg: true
+          projects: |
+            $(System.DefaultWorkingDirectory)/*.sln   
+    - task: VersionDotNetCoreAssemblies@2
+      displayName: Version Assemblies
+      inputs:
+        Path: '$(Build.SourcesDirectory)'
+        VersionNumber: '$(Build.BuildNumber)'
+        Injectversion: False
+        VersionRegex: '\d+\.\d+\.\d+\.\d+'
+        FilenamePattern: '.csproj'
+        SDKNames: 'Microsoft.NET.Sdk'
+        OutputVersion: 'OutputedVersion'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        projects: |
+          **/*.csproj        
+        arguments: --configuration Release
+
+    - task: DotNetCoreCLI@2
+      displayName: Tests
+      inputs:
+        command: 'test'
+        projects: |
+          **/*.Tests.csproj        
+        testRunTitle: 'Unit Tests'
+        arguments: --configuration Release   
+    - task: NuGetCommand@2
+      displayName: Create Nuget Package file
+      inputs:
+        command: 'pack'
+        packagesToPack: '**/AzureSignTool.csproj'
+        versioningScheme: 'byBuildNumber'   
+        includeReferencedProjects: true
+        arguments: '-MSBuildVersion 17.5'
+    - task: NuGetCommand@2
+      displayName: Publish Nuget Package
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/MTMAzureSignTool.*.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: '8f4a2c4e-a2cd-41fd-84ba-3c81b8ea529d/50a18726-b4ab-4fa3-831b-ca9eaa986b6d'      

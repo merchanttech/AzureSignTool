@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/AzureSignTool/AzureSignTool.csproj" />
+    <ProjectReference Include="..\..\src\AzureSignTool\MTMAzureSignTool.csproj" />
   </ItemGroup>
 
 </Project>

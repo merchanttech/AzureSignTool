@@ -109,14 +109,40 @@ namespace AzureSignTool
         {
             get
             {
+
                 if (_allFiles == null)
                 {
-                    _allFiles = new HashSet<string>(Files);
+                    var allFiles = new HashSet<string>(Files);
+                    var allTheFiles = new HashSet<string>();
                     if (!string.IsNullOrWhiteSpace(InputFileList))
                     {
-                        _allFiles.UnionWith(File.ReadLines(InputFileList).Where(s => !string.IsNullOrWhiteSpace(s)));
+                        allFiles.UnionWith(File.ReadLines(InputFileList).Where(s => !string.IsNullOrWhiteSpace(s)));
                     }
+
+                    //check for wildcards and inlcude those files as welll...
+                    foreach (var file in allFiles)
+                    {
+                        if (file.Contains("*"))
+                        {
+                            //wildcard.....so grab all the files matching the wildcard and enter them into the all files list
+                            var directory = Path.GetDirectoryName(file);
+                            var dirInfo = new DirectoryInfo(directory);
+                            var fileSearch = file.Replace(dirInfo.FullName, string.Empty).Replace(@"\", string.Empty);
+                            var extraFiles = dirInfo.GetFiles(fileSearch);
+                            foreach (var extraFile in extraFiles)
+                            {
+                                allTheFiles.Add(extraFile.FullName);
+                            }
+                        }
+                        else
+                        {
+                            allTheFiles.Add(file);
+                        }
+                    }
+
+                    _allFiles = allTheFiles;
                 }
+
                 return _allFiles;
             }
         }
