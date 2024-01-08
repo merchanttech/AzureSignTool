@@ -12,6 +12,7 @@ name: $(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 variables:
   buildConfiguration: 'Release'  
   tag: '$(Build.BuildId)'
+  dotNetVersion: '8.x'
 
   
   # Agent VM image name
