@@ -1,8 +1,0 @@
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-  <metadata>    
-    <id>MTMCodeSigningTool</id>
-    <version>1.0.0</version>
-    <description>MTM Code Signing Tool</description>
-    <authors>The MTM Agency</authors>    
-  </metadata>
-</package>
